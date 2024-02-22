@@ -39,3 +39,16 @@ form button {
 form button {
   cursor: pointer;
 }
+
+.login-button {
+  color: white;
+  background-color: blue;
+  padding: 10px;
+  text-decoration: none;
+}
+.go-back-link {
+  color: white;
+  background-color: blue;
+  padding: 10px;
+  text-decoration: none;
+}

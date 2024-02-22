@@ -2,18 +2,21 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { registerUser } from "../api";
+import { Link } from "react-router-dom";
 
 function Register({ setToken }) {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const result = await registerUser({ firstname, lastname, email, password });
     if (result.token) {
       setToken(result.token);
+      setMessage("Registration successful!");
     } else {
       console.error("Registration failed:", result.message);
     }
@@ -53,7 +56,14 @@ function Register({ setToken }) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </label>
-      <input type="submit" value="Register" />
+      <input type="submit" value="Register" className="register-button" />
+      <p>{message}</p>
+      <a href="/login" className="login-button">
+        Log in
+      </a>
+      <Link to="/" className="go-back-link">
+        Go Back
+      </Link>
     </form>
   );
 }
