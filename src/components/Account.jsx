@@ -9,7 +9,13 @@ function Account({ token }) {
   useEffect(() => {
     if (token) {
       fetchAccountDetails(token)
-        .then((response) => setAccount(response.data))
+        .then((data) => {
+          if (data) {
+            setAccount(data);
+          } else {
+            console.error("Unexpected API response:", data);
+          }
+        })
         .catch((error) => console.error(error));
     }
   }, [token]);
@@ -25,7 +31,19 @@ function Account({ token }) {
   return (
     <div>
       <h2>Account Details</h2>
-      {/* Render account details here */}
+      <p>First Name: {account.firstname}</p>
+      <p>Last Name: {account.lastname}</p>
+      <p>Email: {account.email}</p>
+      <h3>Books:</h3>
+      {account.books.length > 0 ? (
+        <ul>
+          {account.books.map((book) => (
+            <li key={book.id}>{book.title}</li>
+          ))}
+        </ul>
+      ) : (
+        <p>No books checked out.</p>
+      )}
     </div>
   );
 }
