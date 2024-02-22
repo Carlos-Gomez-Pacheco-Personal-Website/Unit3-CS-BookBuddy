@@ -1,26 +1,25 @@
 /* TODO - add your code to create a functional React component that renders details for a single book. Fetch the book data from the provided API. You may consider conditionally rendering a 'Checkout' button for logged in users. */
+import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
-import { fetchBookDetails } from "../api";
+import { useParams } from "react-router-dom";
+import { fetchBookDetails } from "../api.js";
 
-function SingleBook() {
+function SingleBook({ token }) {
   const { id } = useParams();
-  const location = useLocation();
-  const [book, setBook] = useState(location.state ? location.state.book : null);
+  const [book, setBook] = useState(null);
 
   useEffect(() => {
-    if (!book) {
-      fetchBookDetails(id)
-        .then((data) => {
-          if (data) {
-            setBook(data);
-          } else {
-            console.error("Unexpected API response:", data);
-          }
-        })
-        .catch((error) => console.error(error));
-    }
-  }, [id, book]);
+    fetchBookDetails(id, token)
+      .then((data) => {
+        if (data) {
+          setBook(data.book);
+          console.log(data);
+        } else {
+          console.error("Unexpected API response:", data);
+        }
+      })
+      .catch((error) => console.error(error));
+  }, [id, token]);
 
   if (!book) {
     return <p>Loading...</p>;
@@ -36,5 +35,9 @@ function SingleBook() {
     </div>
   );
 }
+
+SingleBook.propTypes = {
+  token: PropTypes.any,
+};
 
 export default SingleBook;

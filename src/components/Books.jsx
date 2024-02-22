@@ -1,11 +1,12 @@
 /* TODO - add your code to create a functional React component that displays all of the available books in the library's catalog. Fetch the book data from the provided API. Users should be able to click on an individual book to navigate to the SingleBook component and view its details. */
+import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { fetchBooks } from "../api";
-// import SingleBook from "./SingleBook";
+import { fetchBooks, fetchReservations, deleteReservation } from "../api";
 
-function Books() {
+function Books({ token }) {
   const [books, setBooks] = useState([]);
+  const [reservations, setReservations] = useState([]);
 
   useEffect(() => {
     fetchBooks()
@@ -17,7 +18,30 @@ function Books() {
         }
       })
       .catch((error) => console.error(error));
-  }, []);
+
+    if (token) {
+      fetchReservations(token)
+        .then((data) => {
+          if (data) {
+            setReservations(data);
+          } else {
+            console.error("Unexpected API response:", data);
+          }
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [token]);
+
+  const handleReturn = async (reservationId) => {
+    const result = await deleteReservation(reservationId, token);
+    if (result) {
+      setReservations(
+        reservations.filter((reservation) => reservation.id !== reservationId)
+      );
+    } else {
+      console.error("Return failed:", result.message);
+    }
+  };
 
   return (
     <div>
@@ -43,10 +67,19 @@ function Books() {
           >
             <button>View Details</button>
           </Link>
+          {reservations.find(
+            (reservation) => reservation.bookid === book.id
+          ) && (
+            <button onClick={() => handleReturn(book.id)}>Return Book</button>
+          )}
         </div>
       ))}
     </div>
   );
 }
+
+Books.propTypes = {
+  token: PropTypes.any,
+};
 
 export default Books;
