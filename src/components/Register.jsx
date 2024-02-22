@@ -1,31 +1,48 @@
 /* TODO - add your code to create a functional React component that renders a registration form */
 import PropTypes from "prop-types";
 import { useState } from "react";
-import axios from "axios";
-
-const API_URL = "https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/";
+import { registerUser } from "../api";
 
 function Register({ setToken }) {
-  const [username, setUsername] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const response = await axios.post(`${API_URL}register`, {
-      username,
-      password,
-    });
-    setToken(response.data.token);
+    const result = await registerUser({ firstname, lastname, email, password });
+    if (result.token) {
+      setToken(result.token);
+    } else {
+      console.error("Registration failed:", result.message);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Username:
+        First Name:
         <input
           type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={firstname}
+          onChange={(e) => setFirstname(e.target.value)}
+        />
+      </label>
+      <label>
+        Last Name:
+        <input
+          type="text"
+          value={lastname}
+          onChange={(e) => setLastname(e.target.value)}
+        />
+      </label>
+      <label>
+        Email:
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </label>
       <label>

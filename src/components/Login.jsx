@@ -10,7 +10,11 @@ function Login({ setToken }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const result = await loginUser({ email, password });
-    setToken(result.token);
+    if (result.token) {
+      setToken(result.token);
+    } else {
+      console.error("Login failed:", result.message);
+    }
   };
 
   return (
