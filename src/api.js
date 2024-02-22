@@ -150,3 +150,20 @@ export const deleteReservation = (reservationId, token) => {
     },
   }).then((response) => response.json());
 };
+
+export const makeReservation = (bookId, token) => {
+  return fetch(`${API_URL}reservations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ bookId }),
+  }).then((response) => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error("Server response was not ok.");
+    }
+  });
+};

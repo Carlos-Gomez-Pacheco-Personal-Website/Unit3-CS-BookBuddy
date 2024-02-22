@@ -2,11 +2,17 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { fetchBookDetails } from "../api.js";
+import {
+  fetchBookDetails,
+  updateBookDetails,
+  fetchReservations,
+  deleteReservation,
+} from "../api.js";
 
 function SingleBook({ token }) {
   const { id } = useParams();
   const [book, setBook] = useState(null);
+  const [reservations, setReservations] = useState([]);
 
   useEffect(() => {
     fetchBookDetails(id, token)
@@ -19,7 +25,63 @@ function SingleBook({ token }) {
         }
       })
       .catch((error) => console.error(error));
+
+    fetchReservations(token)
+      .then((data) => {
+        if (data) {
+          setReservations(data.book);
+          console.log(data);
+        } else {
+          console.error("Unexpected API response:", data);
+        }
+      })
+      .catch((error) => console.error(error));
   }, [id, token]);
+
+  const handleReservation = async () => {
+    const updatedBook = await updateBookDetails(
+      id,
+      { available: false },
+      token
+    );
+    if (updatedBook) {
+      setBook(updatedBook);
+      // Refresh the page to see the changes
+      window.location.reload();
+    } else {
+      console.error("Reservation failed:", updatedBook.message);
+    }
+  };
+
+  const handleReturn = async () => {
+    if (reservations) {
+      const reservation = reservations.find(
+        (reservation) => reservation.bookid === parseInt(id)
+      );
+      if (reservation) {
+        const result = await deleteReservation(reservation.id, token);
+        if (result) {
+          const updatedBook = await updateBookDetails(
+            id,
+            { available: true },
+            token
+          );
+          if (updatedBook) {
+            setBook(updatedBook);
+            setReservations(
+              reservations.filter((reservation) => reservation.id !== result.id)
+            );
+            // Refresh the page to see the changes
+            window.location.reload();
+          } else {
+            console.error("Update failed:", updatedBook.message);
+          }
+        } else {
+          console.error("Return failed:", result.message);
+        }
+      }
+    }
+  };
 
   if (!book) {
     return <p>Loading...</p>;
@@ -32,6 +94,11 @@ function SingleBook({ token }) {
       <p>Author: {book.author}</p>
       <p>Description: {book.description}</p>
       <p>Available: {book.available ? "Yes" : "No"}</p>
+      {book.available ? (
+        <button onClick={handleReservation}>Make Reservation</button>
+      ) : (
+        <button onClick={handleReturn}>Return Book</button>
+      )}
     </div>
   );
 }
