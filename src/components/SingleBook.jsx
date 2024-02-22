@@ -2,17 +2,21 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { fetchBookDetails } from "../api";
 
-const API_URL = "https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/";
 function SingleBook({ token }) {
   const { id } = useParams();
   const [book, setBook] = useState(null);
 
   useEffect(() => {
-    axios
-      .get(`${API_URL}books/${id}`)
-      .then((response) => setBook(response.data))
+    fetchBookDetails(id)
+      .then((data) => {
+        if (data) {
+          setBook(data);
+        } else {
+          console.error("Unexpected API response:", data);
+        }
+      })
       .catch((error) => console.error(error));
   }, [id]);
 
@@ -23,7 +27,10 @@ function SingleBook({ token }) {
   return (
     <div>
       <h2>{book.title}</h2>
-      {/* Render book details here */}
+      <p>Author: {book.author}</p>
+      <p>Description: {book.description}</p>
+      <img src={book.coverimage} alt={book.title} />
+      <p>Available: {book.available ? "Yes" : "No"}</p>
       {token && <button>Checkout</button>}
     </div>
   );

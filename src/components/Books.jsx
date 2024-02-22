@@ -26,6 +26,12 @@ function Books() {
         <div key={book.id}>
           <Link to={`/books/${book.id}`}>
             <h3>{book.title}</h3>
+            <img
+              src={book.coverimage}
+              alt={book.title}
+              width={100}
+              height={100}
+            />
             <p>Author: {book.author}</p>
             <p>Description: {book.description}</p>
             <p>Available: {book.available ? "Yes" : "No"}</p>
