@@ -16,7 +16,11 @@ function Account({ token }) {
             .then((data) => {
               if (data) {
                 setAccount(data);
-                setReservation(data.books);
+                // Update the reservation state with the new data
+                const updatedReservations = data.books.filter(
+                  (book) => book.id !== bookId
+                );
+                setReservation(updatedReservations);
               } else {
                 console.error("Unexpected API response:", data);
               }
