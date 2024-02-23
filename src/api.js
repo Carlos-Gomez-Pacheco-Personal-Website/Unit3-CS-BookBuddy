@@ -1,4 +1,4 @@
-const API_URL = "https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/";
+export const API_URL = "https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/";
 
 export const registerUser = (userDetails) => {
   return fetch(`${API_URL}users/register`, {
@@ -89,18 +89,16 @@ export const makeReservation = (bookId, token) => {
   });
 };
 
-export const deleteReservation = (reservationId, token) => {
-  return fetch(`${API_URL}/reservations/${reservationId}`, {
+export async function deleteReservation(reservationId, token) {
+  const response = await fetch(`${API_URL}reservations/${reservationId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  }).then((response) => {
-    if (response.ok === false) {
-      throw new Error("Network response was not ok");
-    }
-
-    return response.json();
   });
-};
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  return response.json();
+}

@@ -211,3 +211,8 @@ ul li {
   border-radius: 3px;
   border: 1px solid #ddd;
 }
+
+.noLinkStyle {
+  text-decoration: none;
+  color: inherit;
+}

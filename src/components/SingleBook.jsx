@@ -45,7 +45,6 @@ function SingleBook({ token }) {
       { available: false },
       token
     );
-
     if (updatedBook.book) {
       setBook(updatedBook.book);
     } else {
@@ -57,16 +56,10 @@ function SingleBook({ token }) {
     if (reservation) {
       const deleteResult = await deleteReservation(reservation.id, token);
       if (deleteResult) {
-        const updatedBook = await updateBookDetails(
-          id,
-          { available: true },
-          token
-        );
-        if (updatedBook.book) {
-          setBook(updatedBook.book);
-        } else {
-          console.error("Update failed:", updatedBook.message);
-        }
+        // Refetch the book details based on the id
+        const updatedBook = await fetchBookDetails(id, token);
+        // Update the state with the new book details
+        setBook(updatedBook.book);
       } else {
         console.error("Delete failed:", deleteResult.message);
       }
@@ -85,9 +78,13 @@ function SingleBook({ token }) {
       <p>Description: {book.description}</p>
       <p>Available: {book.available ? "Yes" : "No"}</p>
       {book.available ? (
-        <button onClick={handleReservation}>Make Reservation</button>
+        <button onClick={async () => await handleReservation()}>
+          <Link to="/account" className="noLinkStyle">
+            Make Reservation
+          </Link>
+        </button>
       ) : (
-        <button onClick={handleReturn}>Return Book</button>
+        <button onClick={async () => await handleReturn()}>Return Book</button>
       )}
       <Link to="/" className="go-back-link">
         Go Back

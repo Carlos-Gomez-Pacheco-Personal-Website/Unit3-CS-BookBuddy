@@ -2,9 +2,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { fetchBooks } from "../api";
+import { useBooksContext } from "../hooks/useBooksContext";
 
 function Books() {
-  const [books, setBooks] = useState([]);
+  // const [books, setBooks] = useState([]);
+  const [books, setBooks] = useBooksContext();
   const [search, setSearch] = useState("");
   const [availableOnly, setAvailableOnly] = useState(false);
 

@@ -3,16 +3,19 @@ import PropTypes from "prop-types";
 import { useState } from "react";
 import { loginUser } from "../api";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Login({ setToken }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
     const result = await loginUser({ email, password });
     if (result.token) {
       setToken(result.token);
+      localStorage.setItem("token", result.token);
+      navigate("/account"); // Added this line
     } else {
       console.error("Login failed:", result.message);
     }

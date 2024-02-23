@@ -2,9 +2,12 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { deleteReservation, fetchAccountDetails } from "../api.js";
+import { useReservationContext } from "../hooks/useReservationContext.js";
 
 function Account({ token }) {
+  const [reservation, setReservation] = useReservationContext();
   const [account, setAccount] = useState(null);
+
   const deleteThis = (bookId) => {
     deleteReservation(bookId, token)
       .then((data) => {
@@ -13,6 +16,7 @@ function Account({ token }) {
             .then((data) => {
               if (data) {
                 setAccount(data);
+                setReservation(data.books);
               } else {
                 console.error("Unexpected API response:", data);
               }
@@ -31,6 +35,7 @@ function Account({ token }) {
         .then((data) => {
           if (data) {
             setAccount(data);
+            setReservation(data.books);
           } else {
             console.error("Unexpected API response:", data);
           }
@@ -54,14 +59,19 @@ function Account({ token }) {
       <p>Last Name: {account.lastname}</p>
       <p>Email: {account.email}</p>
       <h3>Books:</h3>
-      {account.books.length > 0 ? (
+      {reservation.length > 0 ? (
         <ul>
-          {account.books.map((book) => (
+          {reservation.map((book) => (
             <li key={book.id}>
+              <p>{book.bookId}</p>
+              <img
+                src={book.coverimage}
+                alt={book.title}
+                width={100}
+                height={100}
+              />
               <p>Title: {book.title}</p>
               <p>Author: {book.author}</p>
-              <p>ISBN: {book.isbn}</p>
-              <p>Due Date: {book.dueDate}</p>
               <button onClick={() => deleteThis(book.id)}>Return</button>
             </li>
           ))}
