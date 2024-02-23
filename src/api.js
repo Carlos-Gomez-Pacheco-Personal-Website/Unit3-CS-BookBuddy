@@ -90,7 +90,6 @@ export const makeReservation = (bookId, token) => {
 };
 
 export const deleteReservation = (reservationId, token) => {
-  console.log(reservationId);
   return fetch(`${API_URL}/reservations/${reservationId}`, {
     method: "DELETE",
     headers: {

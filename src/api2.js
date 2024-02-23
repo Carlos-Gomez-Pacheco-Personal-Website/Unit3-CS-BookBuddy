@@ -97,7 +97,7 @@ export async function makeReservation(bookId, token) {
 }
 
 export async function deleteReservation(reservationId, token) {
-  const response = await fetch(`/api/reservations/${reservationId}`, {
+  const response = await fetch(`${API_URL}/reservations/${reservationId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
