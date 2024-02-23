@@ -45,10 +45,9 @@ function SingleBook({ token }) {
       { available: false },
       token
     );
+    console.log(updatedBook);
     if (updatedBook) {
       setBook(updatedBook);
-      // Refresh the page to see the changes
-      window.location.reload();
     } else {
       console.error("Reservation failed:", updatedBook.message);
     }
@@ -72,8 +71,6 @@ function SingleBook({ token }) {
             setReservations(
               reservations.filter((reservation) => reservation.id !== result.id)
             );
-            // Refresh the page to see the changes
-            window.location.reload();
           } else {
             console.error("Update failed:", updatedBook.message);
           }

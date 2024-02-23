@@ -5,6 +5,8 @@ import { fetchBooks } from "../api";
 
 function Books() {
   const [books, setBooks] = useState([]);
+  const [search, setSearch] = useState("");
+  const [availableOnly, setAvailableOnly] = useState(false);
 
   useEffect(() => {
     fetchBooks()
@@ -18,10 +20,31 @@ function Books() {
       .catch((error) => console.error(error));
   }, []);
 
+  const filteredBooks = books.filter((book) => {
+    return (
+      book.title.toLowerCase().includes(search.toLowerCase()) &&
+      (!availableOnly || book.available)
+    );
+  });
+
   return (
     <div>
       <h2>Books</h2>
-      {books.map((book) => (
+      <input
+        type="text"
+        placeholder="Search by name"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+      <label>
+        <input
+          type="checkbox"
+          checked={availableOnly}
+          onChange={(e) => setAvailableOnly(e.target.checked)}
+        />
+        Available only
+      </label>
+      {filteredBooks.map((book) => (
         <div
           key={book.id}
           style={{ border: "1px solid black", margin: "10px", padding: "10px" }}
