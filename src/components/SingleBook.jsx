@@ -132,24 +132,25 @@ import {
 function SingleBook({ token }) {
   const { id } = useParams();
   const [book, setBook] = useState(null);
-  const [reservations, setReservations] = useState([]);
+  const [reservation, setReservation] = useState(null);
 
   useEffect(() => {
     fetchBookDetails(id, token)
       .then((data) => {
         if (data) {
+          fetchReservations(token)
+            .then((response) => {
+              response.reservation.forEach((reservation) => {
+                if (
+                  reservation.title.toLowerCase() ==
+                  data.book.title.toLowerCase()
+                ) {
+                  setReservation(reservation);
+                }
+              });
+            })
+            .catch((error) => console.error(error));
           setBook(data.book);
-        } else {
-          console.error("Unexpected API response:", data);
-        }
-      })
-      .catch((error) => console.error(error));
-
-    fetchReservations(token)
-      .then((data) => {
-        if (data) {
-          console.log(data.reservation);
-          setReservations(data.reservation);
         } else {
           console.error("Unexpected API response:", data);
         }
@@ -163,41 +164,30 @@ function SingleBook({ token }) {
       { available: false },
       token
     );
-    console.log(updatedBook);
-    if (updatedBook) {
-      setBook(updatedBook);
+
+    if (updatedBook.book) {
+      setBook(updatedBook.book);
     } else {
       console.error("Reservation failed:", updatedBook.message);
     }
   };
 
   const handleReturn = async () => {
-    if (reservations) {
-      console.log(reservation);
-      const reservation = reservations.find(
-        (reservation) => reservation.book === parseInt(id)
-      );
-      if (reservation) {
-        const deleteResult = await deleteReservation(reservation.id, token);
-        if (deleteResult.success) {
-          const updatedBook = await updateBookDetails(
-            id,
-            { available: true },
-            token
-          );
-          if (updatedBook) {
-            setBook(updatedBook);
-            setReservations(
-              reservations.filter(
-                (reservation) => reservation.id !== deleteResult.reservation.id
-              )
-            );
-          } else {
-            console.error("Update failed:", updatedBook.message);
-          }
+    if (reservation) {
+      const deleteResult = await deleteReservation(reservation.id, token);
+      if (deleteResult) {
+        const updatedBook = await updateBookDetails(
+          id,
+          { available: true },
+          token
+        );
+        if (updatedBook.book) {
+          setBook(updatedBook.book);
         } else {
-          console.error("Delete failed:", deleteResult.message);
+          console.error("Update failed:", updatedBook.message);
         }
+      } else {
+        console.error("Delete failed:", deleteResult.message);
       }
     }
   };

@@ -90,16 +90,18 @@ export const makeReservation = (bookId, token) => {
 };
 
 export const deleteReservation = (reservationId, token) => {
-  return fetch(`/api/reservations/${reservationId}`, {
+  console.log(reservationId);
+  return fetch(`${API_URL}/reservations/${reservationId}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   }).then((response) => {
-    if (!response.ok) {
+    if (response.ok === false) {
       throw new Error("Network response was not ok");
     }
+
     return response.json();
   });
 };
