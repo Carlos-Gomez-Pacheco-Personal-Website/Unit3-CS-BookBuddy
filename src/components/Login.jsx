@@ -2,6 +2,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { loginUser } from "../api";
+import { Link } from "react-router-dom";
 
 function Login({ setToken }) {
   const [email, setEmail] = useState("");
@@ -32,6 +33,12 @@ function Login({ setToken }) {
         onChange={(e) => setPassword(e.target.value)}
       />
       <button type="submit">Login</button>
+      <a href="/Register" className="login-button">
+        Register
+      </a>
+      <Link to="/" className="go-back-link">
+        Go Back
+      </Link>
     </form>
   );
 }

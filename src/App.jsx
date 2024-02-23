@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import bookLogo from "./assets/books.png";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -22,9 +27,22 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login setToken={setToken} />} />
           <Route path="/register" element={<Register setToken={setToken} />} />
-          <Route path="/account" element={<Account token={token} />} />
-          <Route path="/books/:id" element={<SingleBook token={token} />} />
-          <Route path="/" element={<Books />} />
+          <Route
+            path="/account"
+            element={
+              token ? <Account token={token} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/books/:id"
+            element={
+              token ? <SingleBook token={token} /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/"
+            element={token ? <Books token={token} /> : <Navigate to="/login" />}
+          />
         </Routes>
       </div>
     </Router>

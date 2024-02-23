@@ -1,5 +1,6 @@
 /* TODO - add your code to create a functional React component that renders details for a single book. Fetch the book data from the provided API. You may consider conditionally rendering a 'Checkout' button for logged in users. */
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -99,6 +100,9 @@ function SingleBook({ token }) {
       ) : (
         <button onClick={handleReturn}>Return Book</button>
       )}
+      <Link to="/" className="go-back-link">
+        Go Back
+      </Link>
     </div>
   );
 }

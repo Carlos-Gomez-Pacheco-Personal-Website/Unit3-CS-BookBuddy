@@ -18,7 +18,7 @@ function Navigation({ token, setToken }) {
         </>
       ) : (
         <>
-          <Link to="/login">Login</Link>
+          {/* <Link to="/login">Login</Link> */}
           <Link to="/register">Register</Link>
         </>
       )}
