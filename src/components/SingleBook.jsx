@@ -20,7 +20,6 @@ function SingleBook({ token }) {
       .then((data) => {
         if (data) {
           setBook(data.book);
-          console.log(data);
         } else {
           console.error("Unexpected API response:", data);
         }
@@ -30,8 +29,8 @@ function SingleBook({ token }) {
     fetchReservations(token)
       .then((data) => {
         if (data) {
-          setReservations(data.book);
           console.log(data);
+          setReservations(data.reservation);
         } else {
           console.error("Unexpected API response:", data);
         }
@@ -54,6 +53,7 @@ function SingleBook({ token }) {
   };
 
   const handleReturn = async () => {
+    console.log(reservations);
     if (reservations) {
       const reservation = reservations.find(
         (reservation) => reservation.bookid === parseInt(id)
