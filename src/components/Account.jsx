@@ -29,7 +29,7 @@ function Account({ token }) {
   }
 
   return (
-    <div>
+    <div className="accountseg">
       <h2>Account Details</h2>
       <p>First Name: {account.firstname}</p>
       <p>Last Name: {account.lastname}</p>

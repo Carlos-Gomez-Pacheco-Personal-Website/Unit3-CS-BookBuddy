@@ -72,16 +72,6 @@ export const fetchReservations = (token) => {
   }).then((response) => response.json());
 };
 
-export const deleteReservation = (reservationId, token) => {
-  return fetch(`${API_URL}reservations/${reservationId}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.json());
-};
-
 export const makeReservation = (bookId, token) => {
   return fetch(`${API_URL}reservations`, {
     method: "POST",
@@ -96,5 +86,20 @@ export const makeReservation = (bookId, token) => {
     } else {
       throw new Error("Server response was not ok.");
     }
+  });
+};
+
+export const deleteReservation = (reservationId, token) => {
+  return fetch(`/api/reservations/${reservationId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
   });
 };

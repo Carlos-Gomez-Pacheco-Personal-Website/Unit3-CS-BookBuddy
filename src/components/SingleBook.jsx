@@ -1,4 +1,5 @@
 /* TODO - add your code to create a functional React component that renders details for a single book. Fetch the book data from the provided API. You may consider conditionally rendering a 'Checkout' button for logged in users. */
+
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -8,6 +9,7 @@ import {
   updateBookDetails,
   fetchReservations,
   deleteReservation,
+  makeReservation,
 } from "../api.js";
 
 function SingleBook({ token }) {
@@ -29,7 +31,6 @@ function SingleBook({ token }) {
     fetchReservations(token)
       .then((data) => {
         if (data) {
-          console.log(data);
           setReservations(data.reservation);
         } else {
           console.error("Unexpected API response:", data);
@@ -39,28 +40,32 @@ function SingleBook({ token }) {
   }, [id, token]);
 
   const handleReservation = async () => {
-    const updatedBook = await updateBookDetails(
-      id,
-      { available: false },
-      token
-    );
-    console.log(updatedBook);
-    if (updatedBook) {
-      setBook(updatedBook);
+    const reservationResult = await makeReservation(id, token);
+    if (reservationResult.success) {
+      const updatedBook = await updateBookDetails(
+        id,
+        { available: false },
+        token
+      );
+      if (updatedBook) {
+        setBook(updatedBook);
+        setReservations([...reservations, reservationResult.reservation]);
+      } else {
+        console.error("Reservation failed:", updatedBook.message);
+      }
     } else {
-      console.error("Reservation failed:", updatedBook.message);
+      console.error("Reservation failed:", reservationResult.message);
     }
   };
 
   const handleReturn = async () => {
-    console.log(reservations);
     if (reservations) {
       const reservation = reservations.find(
         (reservation) => reservation.bookid === parseInt(id)
       );
       if (reservation) {
-        const result = await deleteReservation(reservation.id, token);
-        if (result) {
+        const deleteResult = await deleteReservation(reservation.id, token);
+        if (deleteResult.success) {
           const updatedBook = await updateBookDetails(
             id,
             { available: true },
@@ -69,13 +74,15 @@ function SingleBook({ token }) {
           if (updatedBook) {
             setBook(updatedBook);
             setReservations(
-              reservations.filter((reservation) => reservation.id !== result.id)
+              reservations.filter(
+                (reservation) => reservation.id !== deleteResult.reservation.id
+              )
             );
           } else {
             console.error("Update failed:", updatedBook.message);
           }
         } else {
-          console.error("Return failed:", result.message);
+          console.error("Delete failed:", deleteResult.message);
         }
       }
     }
@@ -86,7 +93,7 @@ function SingleBook({ token }) {
   }
 
   return (
-    <div>
+    <div className="booksseg">
       <h2>{book.title}</h2>
       <img src={book.coverimage} alt={book.title} width={100} height={100} />
       <p>Author: {book.author}</p>

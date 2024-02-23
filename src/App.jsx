@@ -20,7 +20,7 @@ function App() {
     <Router>
       <div>
         <h1>
-          <img id="logo-image" src={bookLogo} />
+          <img id="logo-image" src={bookLogo} width={35} height={35} />
           Library App
         </h1>
         <Navigation token={token} setToken={setToken} />
